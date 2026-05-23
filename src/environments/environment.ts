@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:4100/api'
+  apiUrl: 'https://portfolio-backend-khpu.onrender.com/api'
 };
