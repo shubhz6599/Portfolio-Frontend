@@ -21,6 +21,7 @@ export class App implements OnInit, AfterViewInit {
   protected readonly activeProjectSlug = signal(defaultPortfolio.projects[0].slug);
   protected readonly formState = signal<'idle' | 'sending' | 'sent' | 'error'>('idle');
   protected readonly formMessage = signal('');
+  private _toastTimeout?: ReturnType<typeof setTimeout>;
   protected readonly year = new Date().getFullYear();
   private readonly _doc = inject(DOCUMENT);
   private _revealObserver!: IntersectionObserver;
@@ -86,9 +87,37 @@ export class App implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     // small delay to ensure DOM nodes are present
-    setTimeout(() => this.setupRevealObserver(), 60);
-    this._setupRevealObserver();
-    this._setupScrolledTopbar();
+    setTimeout(() => {
+      this._setupRevealObserver();
+      this._setupScrolledTopbar();
+      this._setupHamburger();
+    }, 80);
+  }
+  private _setupHamburger(): void {
+    const toggle = this._doc.querySelector<HTMLButtonElement>('#navToggle');
+    const nav = this._doc.querySelector<HTMLElement>('#primaryNav');
+    if (!toggle || !nav) return;
+
+    toggle.addEventListener('click', () => {
+      const isOpen = nav.classList.toggle('open');
+      toggle.classList.toggle('open', isOpen);
+      toggle.setAttribute('aria-expanded', String(isOpen));
+    });
+
+    // Close drawer when user clicks outside
+    this._doc.addEventListener('click', (e: Event) => {
+      const target = e.target as HTMLElement;
+      if (!nav.contains(target) && !toggle.contains(target)) {
+        nav.classList.remove('open');
+        toggle.classList.remove('open');
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    // Close drawer on Escape
+    this._doc.addEventListener('keydown', (e: KeyboardEvent) => {
+      if (e.key === 'Escape') this.closeNav();
+    });
   }
 
   private setupRevealObserver(): void {
@@ -137,7 +166,7 @@ export class App implements OnInit, AfterViewInit {
       .subscribe({
         next: (response) => {
           this.formState.set('sent');
-          this.formMessage.set(`${response.message} Reference: ${response.enquiryId}`);
+          this._showToast(`${response.message} Reference: ${response.enquiryId}`);
           this.enquiryForm.reset({
             name: '',
             email: '',
@@ -152,7 +181,7 @@ export class App implements OnInit, AfterViewInit {
         },
         error: (error) => {
           this.formState.set('error');
-          this.formMessage.set(
+          this._showToast(
             error?.error?.message ??
             'The enquiry could not be sent right now. Please email me directly.'
           );
@@ -163,6 +192,25 @@ export class App implements OnInit, AfterViewInit {
   protected isInvalid(controlName: keyof typeof this.enquiryForm.controls): boolean {
     const control = this.enquiryForm.controls[controlName];
     return control.invalid && (control.dirty || control.touched);
+  }
+
+  private _showToast(message: string): void {
+    this.formMessage.set(message);
+    if (this._toastTimeout) {
+      clearTimeout(this._toastTimeout);
+    }
+    this._toastTimeout = setTimeout(() => {
+      this.formMessage.set('');
+      this._toastTimeout = undefined;
+    }, 5000);
+  }
+
+  protected clearToast(): void {
+    this.formMessage.set('');
+    if (this._toastTimeout) {
+      clearTimeout(this._toastTimeout);
+      this._toastTimeout = undefined;
+    }
   }
 
   private _setupRevealObserver(): void {
@@ -204,5 +252,12 @@ export class App implements OnInit, AfterViewInit {
   // ── Cleanup ────────────────────────────────────────────────
   ngOnDestroy(): void {
     this._revealObserver?.disconnect();
+  }
+  protected closeNav(): void {
+    const nav = this._doc.querySelector<HTMLElement>('nav');
+    const toggle = this._doc.querySelector<HTMLButtonElement>('.nav-toggle');
+    nav?.classList.remove('open');
+    toggle?.classList.remove('open');
+    toggle?.setAttribute('aria-expanded', 'false');
   }
 }
