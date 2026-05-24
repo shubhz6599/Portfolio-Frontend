@@ -1,8 +1,10 @@
-import { Component, OnInit, AfterViewInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, AfterViewInit, computed, inject, signal, HostListener } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { take } from 'rxjs';
 import { defaultPortfolio } from './portfolio-data';
 import { PortfolioApiService } from './portfolio-api.service';
+import { DOCUMENT } from '@angular/common';
+
 
 @Component({
   selector: 'app-root',
@@ -20,6 +22,8 @@ export class App implements OnInit, AfterViewInit {
   protected readonly formState = signal<'idle' | 'sending' | 'sent' | 'error'>('idle');
   protected readonly formMessage = signal('');
   protected readonly year = new Date().getFullYear();
+  private readonly _doc = inject(DOCUMENT);
+  private _revealObserver!: IntersectionObserver;
 
   protected readonly activeProject = computed(() => {
     return (
@@ -83,6 +87,8 @@ export class App implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     // small delay to ensure DOM nodes are present
     setTimeout(() => this.setupRevealObserver(), 60);
+    this._setupRevealObserver();
+    this._setupScrolledTopbar();
   }
 
   private setupRevealObserver(): void {
@@ -123,7 +129,7 @@ export class App implements OnInit, AfterViewInit {
 
     this.formState.set('sending');
     this.formMessage.set('Sending your enquiry...');
-console.log(this.enquiryForm.getRawValue());
+    console.log(this.enquiryForm.getRawValue());
 
     this.api
       .submitEnquiry(this.enquiryForm.getRawValue())
@@ -148,7 +154,7 @@ console.log(this.enquiryForm.getRawValue());
           this.formState.set('error');
           this.formMessage.set(
             error?.error?.message ??
-              'The enquiry could not be sent right now. Please email me directly.'
+            'The enquiry could not be sent right now. Please email me directly.'
           );
         }
       });
@@ -157,5 +163,46 @@ console.log(this.enquiryForm.getRawValue());
   protected isInvalid(controlName: keyof typeof this.enquiryForm.controls): boolean {
     const control = this.enquiryForm.controls[controlName];
     return control.invalid && (control.dirty || control.touched);
+  }
+
+  private _setupRevealObserver(): void {
+    const options: IntersectionObserverInit = {
+      threshold: 0.12,
+      rootMargin: '0px 0px -60px 0px',
+    };
+
+    this._revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed');
+          // Unobserve after first reveal for performance
+          this._revealObserver.unobserve(entry.target);
+        }
+      });
+    }, options);
+
+    // Observe all reveal targets
+    const targets = this._doc.querySelectorAll<HTMLElement>(
+      '.reveal, .reveal-left, .stagger'
+    );
+    targets.forEach((el) => this._revealObserver.observe(el));
+  }
+
+  // ── Topbar shadow on scroll ────────────────────────────────
+  private _setupScrolledTopbar(): void {
+    const topbar = this._doc.querySelector<HTMLElement>('.topbar');
+    if (!topbar) return;
+
+    const onScroll = () => {
+      topbar.classList.toggle('scrolled', window.scrollY > 20);
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll(); // run once on init
+  }
+
+  // ── Cleanup ────────────────────────────────────────────────
+  ngOnDestroy(): void {
+    this._revealObserver?.disconnect();
   }
 }

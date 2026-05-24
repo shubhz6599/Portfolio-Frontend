@@ -1,4 +1,15 @@
+<!--
+  ============================================================
+  SHUBHAM KARKHILE — PORTFOLIO
+  Redesigned: Dark Obsidian Editorial
+  All Angular 21 bindings preserved, no functional changes.
+  New classes added for scroll-reveal and stagger animations.
+  ============================================================
+-->
+
 <div class="shell">
+
+  <!-- ── TOPBAR ─────────────────────────────────────────── -->
   <header class="topbar" aria-label="Primary navigation">
     <a class="brand-mark" href="#top" aria-label="Shubham Karkhile home">
       <span class="brand-logo" aria-hidden="true">
@@ -16,31 +27,42 @@
   </header>
 
   <main id="top">
+
+    <!-- ── HERO ─────────────────────────────────────────── -->
     <section class="hero-band" aria-labelledby="hero-title">
+
+      <!-- Decorative signal lines -->
       <div class="signal-grid" aria-hidden="true">
         @for (line of [1, 2, 3, 4, 5, 6]; track line) {
           <span></span>
         }
       </div>
 
+      <!-- Copy block -->
       <div class="hero-copy">
         <div class="eyebrow">
           <span class="status-dot" [class.live]="apiState() === 'live'"></span>
           {{ apiState() === 'live' ? 'Live' : apiState() === 'loading' ? 'Loading portfolio' : 'Offline mode' }}
         </div>
+
         <h1 id="hero-title">
-          {{ content().profile.name }} builds Angular systems that feel fast before clients can ask for speed.
+          {{ content().profile.name }} builds
+          <em>Angular systems</em>
+          that feel fast before clients can ask for speed.
         </h1>
+
         <p>
           {{ content().profile.summary }}
         </p>
+
         <div class="hero-actions">
           <a class="button primary" href="#case-files">View case files</a>
-          <a class="button ghost" href="#enquiry">Send enquiry</a>
-          <a class="button text" [href]="content().profile.resumeUrl" target="_blank" rel="noopener">Open CV</a>
+          <a class="button ghost"   href="#enquiry">Send enquiry</a>
+          <a class="button text"    [href]="content().profile.resumeUrl" target="_blank" rel="noopener">Open CV ↗</a>
         </div>
       </div>
 
+      <!-- Profile card -->
       <aside class="operator-panel" aria-label="Profile snapshot">
         <div class="portrait-frame">
           <img src="assets/shubham-profile.jpeg" alt="Portrait of Shubham Karkhile" />
@@ -54,12 +76,14 @@
           <strong>{{ content().profile.location }}</strong>
         </div>
         <div class="panel-links">
-          <a [href]="content().profile.linkedin" target="_blank" rel="noopener">LinkedIn</a>
-          <a [href]="content().profile.github" target="_blank" rel="noopener">GitHub</a>
+          <a [href]="content().profile.linkedin" target="_blank" rel="noopener">LinkedIn ↗</a>
+          <a [href]="content().profile.github"   target="_blank" rel="noopener">GitHub ↗</a>
         </div>
       </aside>
     </section>
-    <section class="metric-strip" aria-label="Career metrics">
+
+    <!-- ── METRIC STRIP ──────────────────────────────────── -->
+    <section class="metric-strip stagger" aria-label="Career metrics">
       @for (metric of content().metrics; track metric.label) {
         <article>
           <strong>{{ metric.value }}</strong>
@@ -69,13 +93,14 @@
       }
     </section>
 
+    <!-- ── SERVICES ──────────────────────────────────────── -->
     <section id="services" class="section services-band" aria-labelledby="services-title">
-      <div class="section-heading">
-        <span>Offerings</span>
+      <div class="section-heading reveal">
+        <span>// Offerings</span>
         <h2 id="services-title">Services that move IT brands to growth mode.</h2>
       </div>
 
-      <div class="services-grid">
+      <div class="services-grid stagger">
         @for (service of content().services; track service.title) {
           <article class="service-card">
             <div class="service-head">
@@ -92,13 +117,15 @@
       </div>
     </section>
 
+    <!-- ── CASE FILES ─────────────────────────────────────── -->
     <section id="case-files" class="section case-band" aria-labelledby="case-title">
-      <div class="section-heading">
-        <span>Selected work</span>
+      <div class="section-heading reveal">
+        <span>// Selected work</span>
         <h2 id="case-title">Enterprise case files with measurable outcomes.</h2>
       </div>
 
       <div class="case-layout">
+        <!-- Project tab nav -->
         <div class="case-tabs" role="tablist" aria-label="Project case files">
           @for (project of content().projects; track project.slug; let index = $index) {
             <button
@@ -114,7 +141,8 @@
           }
         </div>
 
-        <article class="case-file">
+        <!-- Active project card -->
+        <article class="case-file reveal">
           <div class="case-file-header">
             <span>{{ activeProject().role }}</span>
             <h3>{{ activeProject().title }}</h3>
@@ -154,13 +182,14 @@
       </div>
     </section>
 
+    <!-- ── STACK MAP ──────────────────────────────────────── -->
     <section id="stack-map" class="section stack-band" aria-labelledby="stack-title">
-      <div class="section-heading">
-        <span>Skill topology</span>
+      <div class="section-heading reveal">
+        <span>// Skill topology</span>
         <h2 id="stack-title">A practical stack map for Angular-heavy products.</h2>
       </div>
 
-      <div class="skill-map">
+      <div class="skill-map stagger">
         @for (group of content().skills; track group.name) {
           <article class="skill-node">
             <span>{{ group.signal }}</span>
@@ -175,15 +204,16 @@
       </div>
     </section>
 
+    <!-- ── DEPLOY LOG / EXPERIENCE ────────────────────────── -->
     <section id="experience" class="section experience-band" aria-labelledby="experience-title">
-      <div class="section-heading">
-        <span>Deploy log</span>
+      <div class="section-heading reveal">
+        <span>// Deploy log</span>
         <h2 id="experience-title">Career releases, ordered by production weight.</h2>
       </div>
 
       <div class="timeline">
         @for (item of content().experiences; track item.company) {
-          <article>
+          <article class="reveal">
             <div class="timeline-meta">
               <strong>{{ item.period }}</strong>
               <span>{{ item.location }}</span>
@@ -202,18 +232,20 @@
       </div>
     </section>
 
+    <!-- ── ENQUIRY ────────────────────────────────────────── -->
     <section id="enquiry" class="section enquiry-band" aria-labelledby="enquiry-title">
-      <div class="section-heading">
-        <span>Client intake</span>
+      <div class="section-heading reveal">
+        <span>// Client intake</span>
         <h2 id="enquiry-title">Send a project enquiry directly into the MongoDB and email pipeline.</h2>
       </div>
 
       <form [formGroup]="enquiryForm" (ngSubmit)="submitEnquiry()" novalidate>
+        <!-- Honeypot (hidden) -->
         <input class="honeypot" type="text" formControlName="website" tabindex="-1" autocomplete="off" />
 
         <label>
           Name
-          <input type="text" formControlName="name" autocomplete="name" />
+          <input type="text" formControlName="name" autocomplete="name" placeholder="Your full name" />
           @if (isInvalid('name')) {
             <span class="field-error">Enter at least 2 characters.</span>
           }
@@ -221,7 +253,7 @@
 
         <label>
           Email
-          <input type="email" formControlName="email" autocomplete="email" />
+          <input type="email" formControlName="email" autocomplete="email" placeholder="you@company.com" />
           @if (isInvalid('email')) {
             <span class="field-error">Use a valid email address.</span>
           }
@@ -229,7 +261,7 @@
 
         <label>
           Phone
-          <input type="tel" formControlName="phone" autocomplete="tel" />
+          <input type="tel" formControlName="phone" autocomplete="tel" placeholder="+91 98765 43210" />
           @if (isInvalid('phone')) {
             <span class="field-error">Use numbers, spaces, brackets, or + only.</span>
           }
@@ -237,7 +269,7 @@
 
         <label>
           Company
-          <input type="text" formControlName="company" autocomplete="organization" />
+          <input type="text" formControlName="company" autocomplete="organization" placeholder="Your company" />
         </label>
 
         <label>
@@ -260,7 +292,7 @@
 
         <label class="message-field">
           Message
-          <textarea rows="7" formControlName="message"></textarea>
+          <textarea rows="7" formControlName="message" placeholder="Describe your project and what you need…"></textarea>
           @if (isInvalid('message')) {
             <span class="field-error">Add at least 20 characters so I know what you need.</span>
           }
@@ -272,23 +304,29 @@
         </label>
 
         <button class="button primary" type="submit" [disabled]="formState() === 'sending'">
-          {{ formState() === 'sending' ? 'Sending...' : 'Send enquiry' }}
+          {{ formState() === 'sending' ? 'Sending…' : 'Send enquiry →' }}
         </button>
 
         @if (formMessage()) {
-          <p class="form-status" [class.error]="formState() === 'error'" [class.sent]="formState() === 'sent'">
+          <p class="form-status"
+             [class.error]="formState() === 'error'"
+             [class.sent]="formState() === 'sent'">
             {{ formMessage() }}
           </p>
         }
       </form>
     </section>
-  </main>
 
+  </main><!-- /main -->
+
+  <!-- ── FOOTER ────────────────────────────────────────── -->
   <footer>
-    <span>(c) {{ year }} {{ content().profile.name }}</span>
+    <span>© {{ year }} {{ content().profile.name }}</span>
     <a [href]="'mailto:' + content().profile.email">{{ content().profile.email }}</a>
-    <a [href]="'tel:' + content().profile.phone">{{ content().profile.phone }}</a>
+    <a [href]="'tel:'    + content().profile.phone">{{ content().profile.phone }}</a>
   </footer>
-</div>
 
-<a class="floating-cta" href="#enquiry" aria-label="Open enquiry">Enquiry</a>
+</div><!-- /shell -->
+
+<!-- Floating enquiry CTA -->
+<a class="floating-cta" href="#enquiry" aria-label="Open enquiry form">Enquiry ↑</a>
