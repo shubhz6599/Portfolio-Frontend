@@ -1,4 +1,5 @@
 export const environment = {
   production: true,
-  apiUrl: '/api'
+    apiUrl: 'https://portfolio-backend-khpu.onrender.com/api',
+  
 };
