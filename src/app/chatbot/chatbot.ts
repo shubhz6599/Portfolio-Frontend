@@ -19,10 +19,10 @@ type ChatPhase = 'idle' | 'sending';
 
 // ── Quick-reply chips shown on the welcome screen ────────────────
 const QUICK_REPLIES: string[] = [
-  'What Angular services do you offer?',
-  'Tell me about your recent projects',
-  'What technologies do you work with?',
-  'How can I hire you?',
+  // 'Services you offer?',
+  'Hello! Who Are You?',
+  'What is AI?',
+  'Who is prime minister of india?',
 ];
 
 // ── Welcome message (assistant, shown at session start) ──────────
