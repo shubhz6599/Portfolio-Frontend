@@ -4,11 +4,12 @@ import { take } from 'rxjs';
 import { defaultPortfolio } from './portfolio-data';
 import { PortfolioApiService } from './portfolio-api.service';
 import { DOCUMENT } from '@angular/common';
+import { ChatbotComponent } from './chatbot/chatbot';
 
 
 @Component({
   selector: 'app-root',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule,ChatbotComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
